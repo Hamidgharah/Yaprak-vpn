@@ -30,9 +30,18 @@ class VpnHomeScreen extends StatefulWidget {
 
 class _VpnHomeScreenState extends State<VpnHomeScreen> {
   bool isConnected = false;
+  bool isConnecting = false;
 
-  void toggleConnection() {
+  void toggleConnection() async {
     setState(() {
+      isConnecting = true;
+    });
+
+    // شبیه‌سازی اتصال به سرور VLESS + Reality
+    await Future.delayed(const Duration(seconds: 2));
+
+    setState(() {
+      isConnecting = false;
       isConnected = !isConnected;
     });
   }
@@ -51,38 +60,48 @@ class _VpnHomeScreenState extends State<VpnHomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              isConnected ? 'CONNECTED' : 'DISCONNECTED',
+              isConnecting
+                  ? 'CONNECTING...'
+                  : (isConnected ? 'CONNECTED' : 'DISCONNECTED'),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: isConnected ? const Color(0xFF10B981) : Colors.redAccent,
+                color: isConnected
+                    ? const Color(0xFF10B981)
+                    : (isConnecting ? Colors.amber : Colors.redAccent),
                 letterSpacing: 1.5,
               ),
             ),
             const SizedBox(height: 40),
             GestureDetector(
-              onTap: toggleConnection,
+              onTap: isConnecting ? null : toggleConnection,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 width: 160,
                 height: 160,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isConnected ? const Color(0xFF10B981) : const Color(0xFF1E293B),
+                  color: isConnected
+                      ? const Color(0xFF10B981)
+                      : const Color(0xFF1E293B),
                   boxShadow: [
                     BoxShadow(
-                      color: isConnected 
-                          ? const Color(0xFF10B981).withOpacity(0.5) 
+                      color: isConnected
+                          ? const Color(0xFF10B981).withOpacity(0.5)
                           : Colors.black26,
                       blurRadius: 30,
                       spreadRadius: 5,
                     ),
                   ],
                 ),
-                child: Icon(
-                  Icons.power_settings_new,
-                  size: 80,
-                  color: isConnected ? Colors.white : Colors.grey[500],
+                child: Center(
+                  child: isConnecting
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : Icon(
+                          Icons.power_settings_new,
+                          size: 80,
+                          color: isConnected ? Colors.white : Colors.grey[500],
+                        ),
                 ),
               ),
             ),
@@ -98,7 +117,8 @@ class _VpnHomeScreenState extends State<VpnHomeScreen> {
                 children: [
                   Icon(Icons.location_on, color: Color(0xFF10B981)),
                   SizedBox(width: 10),
-                  Text('Germany - High Speed Server', style: TextStyle(color: Colors.white70)),
+                  Text('VLESS + Reality Server',
+                      style: TextStyle(color: Colors.white70)),
                 ],
               ),
             ),
