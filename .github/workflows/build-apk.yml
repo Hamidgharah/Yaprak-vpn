@@ -26,13 +26,12 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Install dependencies
-        run: flutter pub get
-        working-directory: app
-
-      - name: Build APK
-        run: flutter build apk --release
-        working-directory: app
+      - name: Find and build
+        run: |
+          find . -name "pubspec.yaml"
+          cd app
+          flutter pub get
+          flutter build apk --release
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
