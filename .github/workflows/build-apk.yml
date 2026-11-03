@@ -26,20 +26,16 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Check repository files
-        run: ls -la
-
       - name: Install dependencies
         run: flutter pub get
-        working-directory: ./app
+        working-directory: app
 
       - name: Build APK
         run: flutter build apk --release
-        working-directory: ./app
+        working-directory: app
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: yaprak-vpn-release
           path: app/build/app/outputs/flutter-apk/app-release.apk
-          
