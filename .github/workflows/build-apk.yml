@@ -26,24 +26,16 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Find project root directory
-        id: find_project
-        run: |
-          PUB_PATH=$(find . -name "pubspec.yaml" -print -quit)
-          PROJECT_DIR=$(dirname "$PUB_PATH")
-          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
-          echo "Found project at: $PROJECT_DIR"
-
       - name: Install dependencies
         run: flutter pub get
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: app
 
       - name: Build APK
         run: flutter build apk --release
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: app
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: yaprak-vpn-release
-          path: ${{ env.PROJECT_DIR }}/build/app/outputs/flutter-apk/app-release.apk
+          path: app/build/app/outputs/flutter-apk/app-release.apk
