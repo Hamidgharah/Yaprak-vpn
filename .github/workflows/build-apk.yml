@@ -26,19 +26,22 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: List root files
-        run: ls -la
-
-      - name: Install dependencies
-        run: flutter pub get
-        working-directory: app
-
-      - name: Build APK
-        run: flutter build apk --release
-        working-directory: app
+      - name: Find and build project
+        run: |
+          PUB_FILE=$(find . -name "pubspec.yaml" -print -quit)
+          if [ -z "$PUB_FILE" ]; then
+            echo "Error: pubspec.yaml not found!"
+            exit 1
+          fi
+          PROJECT_DIR=$(dirname "$PUB_FILE")
+          echo "Found project directory: $PROJECT_DIR"
+          
+          cd "$PROJECT_DIR"
+          flutter pub get
+          flutter build apk --release
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: yaprak-vpn-release
-          path: app/build/app/outputs/flutter-apk/app-release.apk
+          path: '**/build/app/outputs/flutter-apk/app-release.apk'
